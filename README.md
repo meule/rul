@@ -10,7 +10,7 @@ The project runs on Amazon EC2 Ubuntu micro server and Amazon RDS PostgreSQL mic
 4. Create Elastic IP and associate it with ec2 instance.
 5. Run: bash rul.sh -h <amazon rds hostname>
 6. During downloading data, converting it to the database (it can take hours) and installation you will be promt several times to enter your RDS server user password (entered during instance starting)
-7. Browse http://<Your Elastic IP>
+7. Browse http://\_Your Elastic IP\_
 8. You are my hero! -‿-
 
 Data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!)
