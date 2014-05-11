@@ -12,8 +12,12 @@ do
         esac
 done
 
+
 sudo locale-gen ru_RU.utf8
 sudo dpkg-reconfigure locales
+
+sudo apt-get install git
+git clone git@github.com:meule/rul.git
 
 sudo apt-get install postgresql-client
 
@@ -25,7 +29,6 @@ sudo add-apt-repository ppa:kakrueger/openstreetmap
 sudo apt-get update
 sudo apt-get install osm2pgsql
 
-mkdir rul
 cd rul
 wget http://data.gis-lab.info/osm_dump/dump/latest/RU.osm.pbf
 #wget https://raw.githubusercontent.com/openstreetmap/osm2pgsql/master/default.style
@@ -34,6 +37,9 @@ osm2pgsql -H $rdshost -s -G -S default.style -U osm -d osm RU.osm.pbf -W --flat-
 
 # rul tables init
 psql -a -f rul.sql -h $rdshost -d osm -U osm
+psql -a -c "VACUUM ANALYZE rul.buildings;" rul.sql -h $rdshost -d osm -U osm
+
+
 
 # server install (thanx to Nelson Minar https://github.com/NelsonMinar/vector-river-map)
 
@@ -43,3 +49,4 @@ pip install django TileStache ModestMaps Werkzeug vectorformats psycopg2 gunicor
 sudo mkdir /etc/nginx/sites-enabled/rul
 cp nginx-rul.conf /etc/nginx
 service nginx start
+bash serve.sh

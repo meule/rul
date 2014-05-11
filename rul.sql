@@ -2,8 +2,8 @@ create schema rul;
 
 -- power
 create table rul.power_generator as
-  select osm_id,name,way,power from planet_osm_point where power='generator'
-  union select osm_id,name,way,power from planet_osm_polygon where power='generator';
+  select osm_id,name,way,power,"generator:source" from planet_osm_point where power='generator'
+  union select osm_id,name,way,power,"generator:source" from planet_osm_polygon where power='generator';
 CREATE INDEX idx_way_power_generator ON rul.power_generator USING gist (way);
 ALTER TABLE rul.power_generator ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_power_generator ON rul.power_generator USING btree (id);
@@ -66,5 +66,3 @@ CREATE INDEX idx_way_man_made ON rul.man_made USING gist (way);
 ALTER TABLE rul.man_made ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_man_made ON rul.man_made USING btree (id);
 --
-
-VACUUM ANALYZE rul.buildings;
