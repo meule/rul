@@ -2,6 +2,7 @@
 # download and setup osm_ru to amazon posgres db with user 'osm' and db 'osm'
 # usage: rul -h <amazon rds host>
 
+#sudo apt-get install git
 #git clone git@github.com:meule/rul.git
 
 # postgis + postgres setup http://gis-lab.info/qa/postgis-vps-install.html
@@ -20,8 +21,6 @@ export PGPASSWORD=@psswrd
 
 sudo locale-gen ru_RU.utf8
 sudo dpkg-reconfigure locales
-
-sudo apt-get install git
 
 sudo apt-get install postgresql-client
 
