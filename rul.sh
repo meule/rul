@@ -17,7 +17,7 @@ done
 
 echo -n "Enter Amazon RDS database password (for user 'osm' created during database installation):"
 read psswrd
-export PGPASSWORD=@psswrd
+export PGPASSWORD=$psswrd
 
 sudo locale-gen ru_RU.utf8
 sudo dpkg-reconfigure locales
@@ -38,6 +38,11 @@ wget http://data.gis-lab.info/osm_dump/dump/latest/RU.osm.pbf
 #wget https://raw.githubusercontent.com/openstreetmap/osm2pgsql/master/default.style
 
 osm2pgsql -H $rdshost -s -G -S default.style -U osm -d osm RU.osm.pbf -W --flat-nodes  flat-nodes --cache 200 --cache-strategy sparse
+psql -a -c "VACUUM ANALYZE public.planet_osm_line;" -h $rdshost -d osm -U osm
+psql -a -c "VACUUM ANALYZE public.planet_osm_road;" -h $rdshost -d osm -U osm
+psql -a -c "VACUUM ANALYZE public.planet_osm_point;" -h $rdshost -d osm -U osm
+psql -a -c "VACUUM ANALYZE public.planet_osm_polygon;" -h $rdshost -d osm -U osm
+
 
 wget http://gis-lab.info/data/vmap0/vegetation.7z
 mkdir vmap0
@@ -70,11 +75,14 @@ psql -a -c "VACUUM ANALYZE rul.veg;"  -h $rdshost -d osm -U osm
 # server install (thanx to Nelson Minar https://github.com/NelsonMinar/vector-river-map)
 
 sudo apt-get install python-dev
-pip install django TileStache ModestMaps Werkzeug vectorformats psycopg2 gunicorn tilestache requests grequests shapely
+sudo apt-get install python-pip
+pip install django  ModestMaps Werkzeug vectorformats gunicorn tilestache requests grequests shapely
 #nginx
+sudo apt-get install nginx-full
 sudo mkdir /etc/nginx/sites-enabled/rul
+sudo mkdir /var/www
 sudo mkdir /var/www/rul
-cp nginx-rul.conf /etc/nginx
+sudo cp nginx-rul.conf /etc/nginx/sites-enabled
 service nginx start
 
 rep='_host_'
