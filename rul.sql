@@ -1,5 +1,3 @@
-create schema rul;
-
 -- power
 create table rul.power_generator as
   select osm_id,name,way,power,"generator:source" from planet_osm_point where power='generator'
@@ -66,3 +64,15 @@ CREATE INDEX idx_way_man_made ON rul.man_made USING gist (way);
 ALTER TABLE rul.man_made ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_man_made ON rul.man_made USING btree (id);
 --
+
+create table rul.veg as
+  select f_code_des,way from rul.veg1
+  union select f_code_des,way from rul.veg2
+  union select f_code_des,way from rul.veg3;
+drop table rul.veg1;
+drop table rul.veg2;
+drop table rul.veg3;
+SELECT UpdateGeometrySRID('rul','veg','way',900913);
+CREATE INDEX idx_way_veg ON rul.veg USING gist (way);
+ALTER TABLE rul.veg ADD COLUMN id SERIAL PRIMARY KEY;
+CREATE UNIQUE INDEX uidx_id_veg ON rul.veg USING btree (id);
