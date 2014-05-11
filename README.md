@@ -13,6 +13,8 @@ The project runs on Amazon EC2 Ubuntu micro server and Amazon RDS PostgreSQL mic
 7. Browse http://\_Your Elastic IP\_
 8. You are my hero! -‿-
 
-Data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!)
-The server stack: PostgreSQL+PostGIS - TileStache - Gunicorn - Nginx
+Data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!).
+
+The server stack: PostgreSQL+PostGIS - TileStache - Gunicorn - Nginx.
+
 The server architecture is taken from Nelson Minar great work: https://github.com/NelsonMinar/vector-river-map (Big thanx Nelson!)
