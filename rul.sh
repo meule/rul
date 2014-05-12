@@ -47,11 +47,11 @@ sudo apt-get -y install python-pip
 sudo pip install --allow-external PIL --allow-unverified PIL django  ModestMaps Werkzeug vectorformats gunicorn tilestache requests grequests shapely
 sudo apt-get -y install nginx-full
 
-wget http://gis-lab.info/data/vmap0/vegetation.7z
-wget http://gis-lab.info/data/vmap0/elevation.7z
-wget http://gis-lab.info/data/vmap0/hydro-lines.7z
-wget http://gis-lab.info/data/vmap0/hydro-area.7z
-wget http://data.gis-lab.info/osm_dump/dump/latest/RU.osm.pbf
+#wget http://gis-lab.info/data/vmap0/vegetation.7z
+#wget http://gis-lab.info/data/vmap0/elevation.7z
+#wget http://gis-lab.info/data/vmap0/hydro-lines.7z
+#wget http://gis-lab.info/data/vmap0/hydro-area.7z
+#wget http://data.gis-lab.info/osm_dump/dump/latest/RU.osm.pbf
 
 mkdir vmap0
 7z e -ovmap0 vegetation.7z
