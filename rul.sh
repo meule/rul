@@ -4,31 +4,36 @@
 # download and setup osm_ru to amazon posgres db with user 'osm' and db 'osm'
 # usage: bash rul.sh -e <elastic IP> -h <amazon rds host>
 
-#sudo apt-get -y install git
-#git clone https://github.com/meule/rul.git
-#cd rul
-#bash rul.sh -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
+# tmux
+# sudo apt-get -y install git
+# git clone https://github.com/meule/rul.git
+# cd rul
+# bash rul.sh -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
 
 # postgis + postgres setup http://gis-lab.info/qa/postgis-vps-install.html
 
 set -e
 
-while getopts ":e:h:" option
+while getopts ":e:h:p:" option
 do
         case "${option}"
         in
             h) rdshost=${OPTARG};;
             e) ec2host=${OPTARG};;
+            p) psswrd=${OPTARG};;
         esac
 done
 
-echo "ec2: "
-echo $ec2host
-echo "rds: "
-echo $rdshost
+echo "ec2: $ec2host"
+echo "rds: $rdshost"
 
-echo -n "Enter Amazon RDS database password (for user 'osm' created during database installation):"
-read psswrd
+if [[ -n $psswrd ]] ; then
+  echo "password is set: $psswrd" ;
+else
+  echo -n "Enter Amazon RDS database password (for user 'osm' created during database installation):"
+  read psswrd
+  echo "password: $psswrd"
+fi
 export PGPASSWORD=$psswrd
 
 #sudo locale-gen ru_RU.utf8
