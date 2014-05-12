@@ -28,6 +28,7 @@ export PGPASSWORD=$psswrd
 
 sudo locale-gen ru_RU.utf8
 sudo locale-gen UTF-8
+sudo locale-gen
 sudo dpkg-reconfigure locales
 
 sudo apt-get -y install postgresql-client
