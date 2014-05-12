@@ -22,6 +22,11 @@ do
         esac
 done
 
+echo "ec2: "
+echo $ec2host
+echo "rds: "
+echo $rdshost
+
 echo -n "Enter Amazon RDS database password (for user 'osm' created during database installation):"
 read psswrd
 export PGPASSWORD=$psswrd
