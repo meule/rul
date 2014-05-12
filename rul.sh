@@ -4,10 +4,10 @@
 # download and setup osm_ru to amazon posgres db with user 'osm' and db 'osm'
 # usage: bash rul.sh -e <elastic IP> -h <amazon rds host>
 
-#sudo apt-get install git
+#sudo apt-get -y install git
 #git clone https://github.com/meule/rul.git
 #cd rul
-#rul.sh -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
+#bash rul.sh -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
 
 # postgis + postgres setup http://gis-lab.info/qa/postgis-vps-install.html
 
@@ -27,12 +27,10 @@ read psswrd
 export PGPASSWORD=$psswrd
 
 sudo locale-gen ru_RU.utf8
+sudo locale-gen UTF-8
 sudo dpkg-reconfigure locales
 
-sudo apt-get install postgresql-client
-
-
-# install osm2pgsql
+sudo apt-get -y install postgresql-client
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository -y ppa:kakrueger/openstreetmap
 sudo apt-get update
