@@ -1,4 +1,4 @@
-RULmap is an interactive map of Russia with different layers based on OSM data and vmap0 data. 
+RULmap is an interactive map of Russia with different layers based on OSM data and Vmap0 data. 
 
 This project contains everything you need from start to finish to make a vector tile based web map of nature and halo habitat of Russia.
 
@@ -13,7 +13,7 @@ The project runs on Amazon EC2 Ubuntu micro server and Amazon RDS PostgreSQL mic
 7. Browse http://\<Your Elastic IP\>
 8. You are my hero! -‿-
 
-Data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!).
+OSM and Vmap0 data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!).
 
 The server stack: PostgreSQL+PostGIS - TileStache - Gunicorn - Nginx.
 
