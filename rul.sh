@@ -13,7 +13,7 @@
 
 set -e
 
-while getopts ":h:" option
+while getopts ":e:h:" option
 do
         case "${option}"
         in
@@ -65,7 +65,7 @@ shp2pgsql -d -g way -s 4326 vmap0/veg-cropland-a.shp rul.veg2 >> veg.sql
 shp2pgsql -d -g way -s 4326 vmap0/veg-grassland-a.shp rul.veg3 >> veg.sql
 shp2pgsql -d -g way -W 'latin1' -s 4326 vmap0/elev-contour-l.shp rul.elev > veg.sql
 
-psql -a -h $rdshost -d osm -U osm -f amazon_postgis_setup.sql 
+psql -a -h $rdshost -d osm -U osm -f amazon_postgis_setup.sql
 psql -a -c "create schema rul;" -h $rdshost -d osm -U osm
 psql -q -U osm -d osm -h $rdshost -f veg.sql
 
