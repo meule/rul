@@ -26,10 +26,10 @@ echo -n "Enter Amazon RDS database password (for user 'osm' created during datab
 read psswrd
 export PGPASSWORD=$psswrd
 
-sudo locale-gen ru_RU.utf8
-sudo locale-gen UTF-8
-sudo locale-gen
-sudo dpkg-reconfigure locales
+#sudo locale-gen ru_RU.utf8
+#sudo locale-gen UTF-8
+#sudo locale-gen
+#sudo dpkg-reconfigure locales
 
 sudo apt-get -y install postgresql-client
 sudo apt-get -y install software-properties-common
