@@ -8,7 +8,7 @@ The project runs on Amazon EC2 Ubuntu micro server and Amazon RDS PostgreSQL mic
 2. Run EC2 Ubuntu micro instance (30GB space) and RDS PostgreSQL micro instance (with database 'osm' and user 'osm', 20GB space) 
 3. Create security group for ec2 instance with open inbound TCP port 80 to all IPs. Create security group for RDS instance with open inbound TCP port 5432 to internal IP of ec2 instance.
 4. Create Elastic IP and associate it with ec2 instance.
-5. Run: bash rul.sh -e \_elastic IP\_ -h \_amazon rds host\_
+5. Run: bash rul.sh -e \<elastic IP\_ -h \_amazon rds host\_
 6. During downloading data, converting it to the database (it can take hours) and installation you will be promt several times to enter your RDS server user password (entered during instance starting)
 7. Browse http://\_Your Elastic IP\_
 8. You are my hero! -‿-
