@@ -39,7 +39,7 @@ sudo apt-get -y install osm2pgsql
 sudo apt-get -y install p7zip-full
 sudo apt-get -y install python-dev
 sudo apt-get -y install python-pip
-pip install django  ModestMaps Werkzeug vectorformats gunicorn tilestache requests grequests shapely
+sudo pip install --allow-external PIL --allow-unverified PIL django  ModestMaps Werkzeug vectorformats gunicorn tilestache requests grequests shapely
 sudo apt-get -y install nginx-full
 
 wget http://gis-lab.info/data/vmap0/vegetation.7z
@@ -64,7 +64,7 @@ psql -a -h $rdshost -d osm -U osm -f amazon_postgis_setup.sql
 psql -a -c "create schema rul;" -h $rdshost -d osm -U osm
 psql -q -U osm -d osm -h $rdshost -f veg.sql
 
-osm2pgsql -H $rdshost -s -G -S default.style -U osm -d osm RU.osm.pbf --flat-nodes  flat-nodes --cache 300 --cache-strategy sparse
+osm2pgsql -H $rdshost -s -G -S default.style -U osm -d osm RU.osm.pbf --cache 7000 --cache-strategy sparse
 psql -a -c "VACUUM ANALYZE public.planet_osm_line;" -h $rdshost -d osm -U osm
 psql -a -c "VACUUM ANALYZE public.planet_osm_road;" -h $rdshost -d osm -U osm
 psql -a -c "VACUUM ANALYZE public.planet_osm_point;" -h $rdshost -d osm -U osm
