@@ -66,7 +66,7 @@ CREATE UNIQUE INDEX uidx_id_man_made ON rul.man_made USING btree (id);
 --
 
 create table rul.veg as
-  select f_code_des,way from rul.veg1
+  select f_code_des as type,way from rul.veg1
   union select f_code_des,way from rul.veg2
   union select f_code_des,way from rul.veg3;
 drop table rul.veg1;
@@ -76,3 +76,11 @@ SELECT UpdateGeometrySRID('rul','veg','way',900913);
 CREATE INDEX idx_way_veg ON rul.veg USING gist (way);
 ALTER TABLE rul.veg ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_veg ON rul.veg USING btree (id);
+
+create table rul.elevation as
+  select zv2 as height,way from rul.elev where zv2<10000;
+SELECT UpdateGeometrySRID('rul','elevation','way',900913);
+drop table rul.elev;
+CREATE INDEX idx_way_elevation ON rul.elevation USING gist (way);
+ALTER TABLE rul.elevation ADD COLUMN id SERIAL PRIMARY KEY;
+CREATE UNIQUE INDEX uidx_id_elevation ON rul.elevation USING btree (id);

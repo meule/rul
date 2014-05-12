@@ -1,130 +1,272 @@
 <!DOCTYPE html>
-<!-- Original code from
-    Nelson Minar https://github.com/NelsonMinar/vector-river-map
-    and Mike Bostock http://bl.ocks.org/mbostock/5593150
-    Adapted by Konstantin@Varik.ru for Moscow vector tile server with data-->
-<meta charset="utf-8">
-<style>
+<!-- from http://bl.ocks.org/NelsonMinar/5851197 -->
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"/>
 
-body { margin: 0; overflow: hidden;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-size: 11px; line-height: 16px;  color:#fff; background-color: #222}
-.map { position: relative; overflow: hidden; }
-.info { position: absolute; bottom: 0px; right: 20px; background-color: rgba(255, 255, 255, 0.7) }
-.layer { position: absolute; }
-.tile { position: absolute; width: 256px; height: 256px; }
-.tile path {
- fill: #ddd;
-}
-#slide {
-  width:50%;
-}
+  <title>RULmap — map of Nature an Halo Habitat of Russia</title>
 
-</style>
-<body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/d3.geo.tile.v0.min.js"></script>
-<script>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+  <!--[if lte IE 8]>
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+  <![endif]-->
+  <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.min.js" charset="utf-8"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
 
-var width = Math.max(960, window.innerWidth),
-    height = Math.max(500, window.innerHeight),
-    prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
+  <style type="text/css">
+  html, body { height: 100% }
+  #map {   min-height: 100%; background-color: #222;}
+  body {
+      margin: 0;
+      font-family: Helvetica, Arial, sans-serif; font-size: 12px;
+      overflow: hidden;
+      background-color: #222;
 
-var tile = d3.geo.tile()
-    .size([width, height]);
+  }
+  .leaflet-popup-content-wrapper {
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+  }
+  #slider_cont{
+    position: absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+  }
 
-var projection = d3.geo.mercator()
-    .scale((1 << 20) / 2 / Math.PI)
-    .translate([-width / 2, -height / 2]); // just temporary
+  path { stroke-linejoin; round; stroke-linecap: round; fill: #ddd; stroke:none;stroke-width:0;}
 
-var tileProjection = d3.geo.mercator();
+  </style>
 
-var tilePath = d3.geo.path()
-    .projection(tileProjection);
+  </head><body>
+<div id="map"></div>
 
-var zoom = d3.behavior.zoom()
-    .scale(projection.scale() * 2 * Math.PI)
-    .scaleExtent([1<<12,1<<23])
-    .translate(projection([37.6, 55.75]).map(function(x) { return -x; }))
-    .on("zoom", zoomed);
+<script type="text/javascript">
+(function(window) {
+	var HAS_HASHCHANGE = (function() {
+		var doc_mode = window.documentMode;
+		return ('onhashchange' in window) &&
+			(doc_mode === undefined || doc_mode > 7);
+	})();
 
-var map = d3.select("body").append("div")
-    .attr("class", "map")
-    .style("width", width + "px")
-    .style("height", height + "px")
-    .call(zoom)
-    .on("mousemove", mousemoved);
+	L.Hash = function(map) {
+		this.onHashChange = L.Util.bind(this.onHashChange, this);
 
-var layer = map.append("div")
-    .attr("class", "layer");
+		if (map) {
+			this.init(map);
+		}
+	};
 
-var info = map.append("div")
-    .attr("class", "info");
+	L.Hash.parseHash = function(hash) {
+		if(hash.indexOf('#') === 0) {
+			hash = hash.substr(1);
+		}
+		var args = hash.split("/");
+		if (args.length == 3) {
+			var zoom = parseInt(args[0], 10),
+			lat = parseFloat(args[1]),
+			lon = parseFloat(args[2]);
+			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
+				return false;
+			} else {
+				return {
+					center: new L.LatLng(lat, lon),
+					zoom: zoom
+				};
+			}
+		} else {
+			return false;
+		}
+	};
 
-zoomed();
+	L.Hash.formatHash = function(map) {
+		var center = map.getCenter(),
+		    zoom = map.getZoom(),
+		    precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
 
-function zoomed() {
-  var tiles = tile
-      .scale(zoom.scale())
-      .translate(zoom.translate())
-      ();
+		return "#" + [zoom,
+			center.lat.toFixed(precision),
+			center.lng.toFixed(precision)
+		].join("/");
+	},
 
-  projection
-      .scale(zoom.scale() / 2 / Math.PI)
-      .translate(zoom.translate());
+	L.Hash.prototype = {
+		map: null,
+		lastHash: null,
 
-  var image = layer
-      .style(prefix + "transform", matrix3d(tiles.scale, tiles.translate))
-    .selectAll(".tile")
-      .data(tiles, function(d) { return d; });
+		parseHash: L.Hash.parseHash,
+		formatHash: L.Hash.formatHash,
 
-  image.exit()
-      .each(function(d) { this._xhr.abort(); })
-      .remove();
+		init: function(map) {
+			this.map = map;
 
-  image.enter().append("svg")
-      .attr("class", "tile")
-      .style("left", function(d) { return d[0] * 256 + "px"; })
-      .style("top", function(d) { return d[1] * 256 + "px"; })
-      .each(function(d) {
-        var svg = d3.select(this);
-        this._xhr = d3.json("/db/" + d[2] + "/" + d[0] + "/" + d[1] + ".json", function(error, json) {
-          var k = Math.pow(2, d[2]) * 256; // size of the world in pixels
+			// reset the hash
+			this.lastHash = null;
+			this.onHashChange();
 
-          tilePath.projection()
-              .translate([k / 2 - d[0] * 256, k / 2 - d[1] * 256]) // [0°,0°] in pixels
-              .scale(k / 2 / Math.PI);
+			if (!this.isListening) {
+				this.startListening();
+			}
+		},
 
-          svg.selectAll("path")
-              .data(json.features)
-            .enter().append("path")
-             //.attr("style", function(d) { return "stroke-width: " + d.properties.strahler/2 + "px;" })
-              .attr("d", function(d) { return tilePath(d); })
-                  return "#8f4"
-              });
+		removeFrom: function(map) {
+			if (this.changeTimeout) {
+				clearTimeout(this.changeTimeout);
+			}
+
+			if (this.isListening) {
+				this.stopListening();
+			}
+
+			this.map = null;
+		},
+
+		onMapMove: function() {
+			// bail if we're moving the map (updating from a hash),
+			// or if the map is not yet loaded
+
+			if (this.movingMap || !this.map._loaded) {
+				return false;
+			}
+
+			var hash = this.formatHash(this.map);
+			if (this.lastHash != hash) {
+				location.replace(hash);
+				this.lastHash = hash;
+			}
+		},
+
+		movingMap: false,
+		update: function() {
+			var hash = location.hash;
+			if (hash === this.lastHash) {
+				return;
+			}
+			var parsed = this.parseHash(hash);
+			if (parsed) {
+				this.movingMap = true;
+
+				this.map.setView(parsed.center, parsed.zoom);
+
+				this.movingMap = false;
+			} else {
+				this.onMapMove(this.map);
+			}
+		},
+
+		// defer hash change updates every 100ms
+		changeDefer: 100,
+		changeTimeout: null,
+		onHashChange: function() {
+			// throttle calls to update() so that they only happen every
+			// `changeDefer` ms
+			if (!this.changeTimeout) {
+				var that = this;
+				this.changeTimeout = setTimeout(function() {
+					that.update();
+					that.changeTimeout = null;
+				}, this.changeDefer);
+			}
+		},
+
+		isListening: false,
+		hashChangeInterval: null,
+		startListening: function() {
+			this.map.on("moveend", this.onMapMove, this);
+
+			if (HAS_HASHCHANGE) {
+				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
+			} else {
+				clearInterval(this.hashChangeInterval);
+				this.hashChangeInterval = setInterval(this.onHashChange, 50);
+			}
+			this.isListening = true;
+		},
+
+		stopListening: function() {
+			this.map.off("moveend", this.onMapMove, this);
+
+			if (HAS_HASHCHANGE) {
+				L.DomEvent.removeListener(window, "hashchange", this.onHashChange);
+			} else {
+				clearInterval(this.hashChangeInterval);
+			}
+			this.isListening = false;
+		}
+	};
+	L.hash = function(map) {
+		return new L.Hash(map);
+	};
+	L.Map.prototype.addHash = function() {
+		this._hash = L.hash(this);
+	};
+	L.Map.prototype.removeHash = function() {
+		this._hash.removeFrom();
+	};
+})(window);
+
+
+
+L.TileLayer.d3_topoJSON =  L.TileLayer.extend({
+    onAdd : function(map) {
+        L.TileLayer.prototype.onAdd.call(this,map);
+        this._path = d3.geo.path().projection(function(d) {
+            var point = map.latLngToLayerPoint(new L.LatLng(d[1],d[0]));
+            return [point.x,point.y];
         });
-      });
+        this.on("tileunload",function(d) {
+            if (d.tile.xhr) d.tile.xhr.abort();
+            if (d.tile.nodes) d.tile.nodes.remove();
+            d.tile.nodes = null;
+            d.tile.xhr = null;
+        });
+    },
+    _loadTile : function(tile,tilePoint) {
+        var self = this;
+        this._adjustTilePoint(tilePoint);
+
+        if (!tile.nodes && !tile.xhr) {
+            tile.xhr = d3.json(this.getTileUrl(tilePoint),function(error, tjData) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    var geoJson = topojson.feature(tjData, tjData.objects[self.options.layerName]);
+                    tile.xhr = null;
+                    tile.nodes = d3.select(map._container).select("svg").append("g");
+                    tile.nodes.selectAll("path")
+                        .data(geoJson.features).enter()
+                      .append("path")
+                        .attr("d", self._path)
+                        .attr("class", self.options.class)
+                        .attr("style", self.options.style);
+                }
+            });
+        }
+    }
+});
+
+// Construct map, center if no location provided
+var map = L.map('map', { minZoom: 1, maxZoom: 16 } );
+
+var hash = new L.Hash(map);
+if (!window.location.hash) {
+    map.setView([55.75,37.65], 11);
 }
 
-function mousemoved() {
-  info.text(formatLocation(projection.invert(d3.mouse(this)), zoom.scale()));
-}
+// Add a fake GeoJSON line to coerce Leaflet into creating the <svg> tag that d3_geoJson needs
+new L.geoJson({"type": "LineString","coordinates":[[0,0],[0,0]]}).addTo(map);
 
-function matrix3d(scale, translate) {
-  var k = scale / 256, r = scale % 1 ? Number : Math.round;
-  return "matrix3d(" + [k, 0, 0, 0, 0, k, 0, 0, 0, 0, k, 0, r(translate[0] * scale), r(translate[1] * scale), 0, 1 ] + ")";
-}
+new L.TileLayer.d3_topoJSON("http://_ec2host_:8001/rivers/{z}/{x}/{y}.topojson", {
+  class: "rivers",
+  layerName: "vectile",
+  style: function(d)
+      {
+          return "fill:#8f4"
+      }
 
-function prefixMatch(p) {
-  var i = -1, n = p.length, s = document.body.style;
-  while (++i < n) if (p[i] + "Transform" in s) return "-" + p[i].toLowerCase() + "-";
-  return "";
-}
+}).addTo(map);
 
-function formatLocation(p, k) {
-  var format = d3.format("." + Math.floor(Math.log(k) / 2 - 2) + "f");
-  return (p[1] < 0 ? format(-p[1]) + "°S" : format(p[1]) + "°N") + " "
-       + (p[0] < 0 ? format(-p[0]) + "°W" : format(p[0]) + "°E");
-}
 
 </script>
+</body></html>

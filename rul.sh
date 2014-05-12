@@ -2,12 +2,12 @@
 
 # RUL project — vector tile maps server with different osm layers
 # download and setup osm_ru to amazon posgres db with user 'osm' and db 'osm'
-# usage: rul -h <amazon rds host>
+# usage: bash rul.sh -e <elastic IP> -h <amazon rds host>
 
 #sudo apt-get install git
 #git clone https://github.com/meule/rul.git
 #cd rul
-#rul.sh -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
+#rul.sh -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
 
 # postgis + postgres setup http://gis-lab.info/qa/postgis-vps-install.html
 
@@ -17,7 +17,8 @@ while getopts ":h:" option
 do
         case "${option}"
         in
-                h) rdshost=${OPTARG};;
+            h) rdshost=${OPTARG};;
+            e) ec2host=${OPTARG};;
         esac
 done
 
@@ -43,16 +44,22 @@ pip install django  ModestMaps Werkzeug vectorformats gunicorn tilestache reques
 sudo apt-get -y install nginx-full
 
 wget http://gis-lab.info/data/vmap0/vegetation.7z
+wget http://gis-lab.info/data/vmap0/elevation.7z
+wget http://gis-lab.info/data/vmap0/hydro-lines.7z
+wget http://gis-lab.info/data/vmap0/hydro-area.7z
 wget http://data.gis-lab.info/osm_dump/dump/latest/RU.osm.pbf
-
 
 mkdir vmap0
 7z e -ovmap0 vegetation.7z
+7z e -ovmap0 elevation.7z
+7z e -ovmap0 hydro-lines.7z
+7z e -ovmap0 hydro-area.7z
 shp2pgsql -d -g way -s 4326 vmap0/veg-tree-a.shp rul.veg1 > veg.sql
 shp2pgsql -a -g way -s 4326 vmap0/veg-swamp-a.shp rul.veg1 >> veg.sql
 shp2pgsql -a -g way -s 4326 vmap0/veg-tundra-a.shp rul.veg1 >> veg.sql
 shp2pgsql -d -g way -s 4326 vmap0/veg-cropland-a.shp rul.veg2 >> veg.sql
 shp2pgsql -d -g way -s 4326 vmap0/veg-grassland-a.shp rul.veg3 >> veg.sql
+shp2pgsql -d -g way -W 'latin1' -s 4326 vmap0/elev-contour-l.shp rul.elev > veg.sql
 
 psql -a -h $rdshost -d osm -U osm -f amazon_postgis_setup.sql
 psql -a -c "create schema rul;" -h $rdshost -d osm -U osm
@@ -77,6 +84,7 @@ psql -a -c "VACUUM ANALYZE rul.power_generator;" -h $rdshost -d osm -U osm
 psql -a -c "VACUUM ANALYZE rul.power_station;"  -h $rdshost -d osm -U osm
 psql -a -c "VACUUM ANALYZE rul.power_line;"  -h $rdshost -d osm -U osm
 psql -a -c "VACUUM ANALYZE rul.veg;"  -h $rdshost -d osm -U osm
+psql -a -c "VACUUM ANALYZE rul.elevation;"  -h $rdshost -d osm -U osm
 
 
 sudo mkdir /etc/nginx/sites-enabled/rul
@@ -85,6 +93,8 @@ service nginx start
 
 rep='_host_'
 sed -i.bak "s/${rep}/${rdshost}/g" tilestache.cfg
+rep='_ec2host_'
+sed -i.bak "s/${rep}/${ec2host}/g" index.html
 rep='_password_'
 sed -i.bak "s/${rep}/${psswrd}/g" tilestache.cfg
 
