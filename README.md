@@ -13,7 +13,7 @@ The project runs on Amazon EC2 Ubuntu micro server and Amazon RDS PostgreSQL mic
 7. Browse http://\<Your Elastic IP\>
 8. You are my hero! -‿-
 
-OSM and Vmap0 data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!).
+OpenStreetMap and <a href="http://gis-lab.info/qa/vmap0-about.html">Vmap0</a> data is from GIS-lab http://gis-lab.info (Thank you guys, you are the best!).
 
 The server stack: PostgreSQL+PostGIS - TileStache - Gunicorn - Nginx.
 
