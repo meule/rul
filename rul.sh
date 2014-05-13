@@ -113,6 +113,7 @@ psql -a -c "VACUUM ANALYZE rul.elevation;"  -h $rdshost -d osm -U osm
 #sudo mkdir /etc/nginx/sites-enabled/rul
 sudo mkdir -p /var/www/rul/public_html
 sudo chown -R ubuntu:ubuntu /var/www/rul/public_html
+sudo chown -R www-data:www-data /var/www/rul/public_html
 sudo chmod 755 /var/www
 sudo cp -R nginx-rul.conf /etc/nginx/sites-available/rul
 sudo ln -s /etc/nginx/sites-available/rul /etc/nginx/sites-enabled/rul
