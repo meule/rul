@@ -257,7 +257,8 @@ if (!window.location.hash) {
 // Add a fake GeoJSON line to coerce Leaflet into creating the <svg> tag that d3_geoJson needs
 new L.geoJson({"type": "LineString","coordinates":[[0,0],[0,0]]}).addTo(map);
 
-new L.TileLayer.d3_topoJSON("http://_ec2host_:8001/rivers/{z}/{x}/{y}.topojson", {
+// new L.TileLayer.d3_topoJSON("http://_ec2host_:8000/rivers/{z}/{x}/{y}.topojson", {
+ new L.TileLayer.d3_topoJSON("http://54.72.184.190:8000/rivers/{z}/{x}/{y}.topojson", {
   class: "rivers",
   layerName: "vectile",
   style: function(d)

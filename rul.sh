@@ -110,9 +110,13 @@ psql -a -c "VACUUM ANALYZE rul.veg;"  -h $rdshost -d osm -U osm
 psql -a -c "VACUUM ANALYZE rul.elevation;"  -h $rdshost -d osm -U osm
 
 # start nginx server
-sudo mkdir /etc/nginx/sites-enabled/rul
-sudo cp nginx-rul.conf /etc/nginx/sites-enabled
-service nginx start
+#sudo mkdir /etc/nginx/sites-enabled/rul
+sudo mkdir -p /var/www/rul
+sudo chown -R ubuntu:ubuntu /var/www/rul
+sudo chmod 755 /var/www
+sudo cp -R nginx-rul.conf /etc/nginx/sites-available/rul
+sudo ln -s /etc/nginx/sites-available/rul /etc/nginx/sites-enabled/rul
+service nginx restart
 
 # replace credentials in configs and html
 rep='_host_'
