@@ -26,7 +26,7 @@ fi
 export PGPASSWORD=$psswrd
 
 # start nginx server
-sudo mkdir /etc/nginx/sites-enabled/rul
+#sudo mkdir /etc/nginx/sites-enabled/rul
 sudo cp nginx-rul.conf /etc/nginx/sites-enabled
 service nginx start
 
