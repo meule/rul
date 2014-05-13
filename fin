@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# bash fin -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com
+
+set -e
+
 while getopts ":e:h:p:" option
 do
         case "${option}"
