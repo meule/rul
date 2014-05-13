@@ -1,0 +1,38 @@
+#!/bin/bash
+
+while getopts ":e:h:p:" option
+do
+        case "${option}"
+        in
+            h) rdshost=${OPTARG};;
+            e) ec2host=${OPTARG};;
+            p) psswrd=${OPTARG};;
+        esac
+done
+echo "ec2: $ec2host"
+echo "rds: $rdshost"
+
+if [[ -n $psswrd ]] ; then
+  echo "password is set: $psswrd" ;
+else
+  echo -n "Enter Amazon RDS database password (for user 'osm' created during database installation):"
+  read psswrd
+  echo "password: $psswrd"
+fi
+export PGPASSWORD=$psswrd
+
+# start nginx server
+sudo mkdir /etc/nginx/sites-enabled/rul
+sudo cp nginx-rul.conf /etc/nginx/sites-enabled
+service nginx start
+
+# replace credentials in configs and html
+rep='_host_'
+sed -i.bak "s/${rep}/${rdshost}/g" tilestache.cfg
+rep='_ec2host_'
+sed -i.bak "s/${rep}/${ec2host}/g" index.html
+rep='_password_'
+sed -i.bak "s/${rep}/${psswrd}/g" tilestache.cfg
+
+# copy clients files from repo and restart servers
+bash serve.sh
