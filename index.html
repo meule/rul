@@ -35,7 +35,7 @@
     width:100%;
   }
 
-  path { stroke-linejoin; round; stroke-linecap: round; fill: #ddd; stroke:none;stroke-width:0;}
+  path.rivers { stroke-linejoin; round; stroke-linecap: round; stroke:#6af; stroke-width:1px;}
 
   </style>
 
@@ -246,7 +246,7 @@ L.TileLayer.d3_topoJSON =  L.TileLayer.extend({
         }
     }
 });
- 
+
 // Construct map, center if no location provided
 var map = L.map('map', { minZoom: 1, maxZoom: 16 } );
 
@@ -264,7 +264,7 @@ new L.geoJson({"type": "LineString","coordinates":[[0,0],[0,0]]}).addTo(map);
   layerName: "vectile",
   style: function(d)
       {
-          return "stroke:#6af; stroke-width:1px;"
+          //return "stroke:#6af; stroke-width:1px;"
       }
 
 }).addTo(map);
