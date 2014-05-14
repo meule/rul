@@ -8,7 +8,13 @@ do
             e) ec2host=${OPTARG};;
             p) psswrd=${OPTARG};;
         esac
-donerep='_host_'
+done
+
+echo "ec2: $ec2host"
+echo "rds: $rdshost"
+echo "password: $psswrd"
+
+rep='_host_'
 sed -i.bak "s/${rep}/${rdshost}/g" tilestache.cfg
 rep='_ec2host_'
 sed -i.bak "s/${rep}/${ec2host}/g" index.html
