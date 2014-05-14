@@ -223,12 +223,12 @@ L.TileLayer.d3_topoJSON =  L.TileLayer.extend({
         });
     },
     _loadTile : function(tile,tilePoint) {
-        var self = this;
+        var self = this, ttt;
         this._adjustTilePoint(tilePoint);
 
         if (!tile.nodes && !tile.xhr) {
-            tile.xhr = d3.json(this.getTileUrl(tilePoint),function(error, tjData) {
-                console.log(this.getTileUrl(tilePoint),tjData,error);
+            tile.xhr = d3.json(ttt=this.getTileUrl(tilePoint),function(error, tjData) {
+                console.log(ttt,tjData,error);
                 if (error) {
                     console.log(error);
                 } else {
