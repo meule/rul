@@ -1,4 +1,4 @@
--- power
+-- power 
 create table rul.power_generator as
   select osm_id,name,way,power,"generator:source" from planet_osm_point where power='generator'
   union select osm_id,name,way,power,"generator:source" from planet_osm_polygon where power='generator';

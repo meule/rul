@@ -12,7 +12,7 @@ bind='127.0.0.1:8000'
 workers=2
 
 timeout=10000
-
+ 
 # Worker class. The default "sync" is fine with nginx as a proxy
 # gevent is a nice alternative if you want to serve the public from Gunicorn
 # worker_class='gevent'

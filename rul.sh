@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ 
 # RUL project — vector tile maps server with different osm layers
 # download and setup osm_ru to amazon posgres db with user 'osm' and db 'osm'
 # usage: bash rul.sh -e <elastic IP> -h <amazon rds host>
@@ -48,7 +48,7 @@ sudo apt-get -y install postgresql-client
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository -y ppa:kakrueger/openstreetmap
 sudo apt-get update
-sudo apt-get -y install osm2pgsql p7zip-full python-dev python-pip postgresql-server-dev-9.3 
+sudo apt-get -y install osm2pgsql p7zip-full python-dev python-pip postgresql-server-dev-9.3
 sudo pip install --allow-external PIL --allow-unverified PIL django  ModestMaps Werkzeug vectorformats psycopg2 gunicorn tilestache requests grequests shapely
 sudo apt-get -y install nginx-full
 

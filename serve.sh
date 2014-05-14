@@ -1,6 +1,4 @@
-rm gunicorn.cfg.py
 rm tilestache.cfg
-rm nginx-rul.conf
 rm index.html
 
 git pull
