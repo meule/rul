@@ -40,15 +40,16 @@ sudo dpkg-reconfigure locales
 set -e
 
 # install software
+
+apt-get install git p7zip-full python-pip postgresql-server-dev-9.1 python-dev libevent-dev gdal-bin postgis
+pip install psycopg2 gunicorn tilestache requests grequests shapely
+
 sudo apt-get -y install postgresql-client
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository -y ppa:kakrueger/openstreetmap
 sudo apt-get update
-sudo apt-get -y install osm2pgsql
-sudo apt-get -y install p7zip-full
-sudo apt-get -y install python-dev
-sudo apt-get -y install python-pip
-sudo pip install --allow-external PIL --allow-unverified PIL django  ModestMaps Werkzeug vectorformats gunicorn tilestache requests grequests shapely
+sudo apt-get -y install osm2pgsql p7zip-full python-dev python-pip postgresql-server-dev-9.3 
+sudo pip install --allow-external PIL --allow-unverified PIL django  ModestMaps Werkzeug vectorformats psycopg2 gunicorn tilestache requests grequests shapely
 sudo apt-get -y install nginx-full
 
 # download vmap0 data
