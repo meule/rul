@@ -7,7 +7,7 @@ import os
 import PIL.Image
 sys.modules['Image'] = PIL.Image
 
-bind='127.0.0.1:8000/tiles'
+bind='127.0.0.1:8000'
 
 # Number of worker processes: 2-4x number of CPU cores is recommended
 
