@@ -22,3 +22,4 @@ timeout=30
 # Worker class. The default "sync" is fine with nginx as a proxy
 # gevent is a nice alternative if you want to serve the public from Gunicorn
 # worker_class='gevent'
+ 
