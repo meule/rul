@@ -7,7 +7,7 @@ The project runs on Amazon EC2 Ubuntu micro server and Amazon RDS PostgreSQL mic
 1. Register with Amazon AWS: https://aws.amazon.com
 2. Run EC2 Ubuntu micro instance (30GB space) and RDS PostgreSQL micro instance (with database 'osm' and user 'osm', 20GB space)
 3. Change the type of EC2 and RDS instances to xlarge. It will cost you $1-2 but significantly reduce data loading time (1-2 hour instead of 1-2 days).
-4. Create security group for ec2 instance with open inbound TCP port 80 to all IPs. Create security group for RDS instance with open inbound TCP port 5432 to internal IP of ec2 instance.
+4. Create security group for ec2 instance with open inbound TCP ports 80 and 8000 to all IPs. Create security group for RDS instance with open inbound TCP port 5432 to internal IP of ec2 instance.
 5. Create Elastic IP and associate it with ec2 instance.
 6. Run: bash rul.sh -e \<elastic IP\> -h \<amazon rds host\>
 7. Wait about 1 hour for software installation, data downloading, converting it to the database. Answer 'No' for new database creating and enter 'osm' for db name and users (during osm2pgsql install).
