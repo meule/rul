@@ -1,3 +1,8 @@
+rm gunicorn.cfg.py
+rm tilestache.cfg
+rm nginx-rul.conf
+rm index.html
+
 git pull
 # replace credentials in configs and html
 while getopts ":e:h:p:" option
