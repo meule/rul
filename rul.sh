@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 # RUL project — vector tile maps server with different osm layers
 # download and setup osm_ru to amazon posgres db with user 'osm' and db 'osm'
 # usage: bash rul.sh -e <elastic IP> -h <amazon rds host>
