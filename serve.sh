@@ -24,7 +24,7 @@ sed -i.bak "s/${rep}/${ec2host}/g" index.html
 rep='_password_'
 sed -i.bak "s/${rep}/${psswrd}/g" tilestache.cfg
 
-*sudo cp -R nginx-rul.conf /etc/nginx/sites-available/default
+sudo cp -R nginx-rul.conf /etc/nginx/sites-available/default
 sudo cp -R nginx-rul.conf /etc/nginx/sites-enabled
 sudo cp -R index.html /var/www/rul/public_html
 sudo service nginx restart
