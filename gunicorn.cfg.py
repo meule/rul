@@ -14,6 +14,6 @@ if not hasattr(os, "sysconf"):
   workers=1
 else:
   os.sysconf("SC_NPROCESSORS_ONLN")
+ 
 
-
-timeout=100   
+timeout=100
