@@ -24,6 +24,7 @@ The server architecture is taken from Nelson Minar great work: https://github.co
 
 2do
 - finish client (layers, popup)
+- make simplified tables for all layers for different zooms
 - try OpenLayers http://gijs.github.io/blog/2014/04/08/topojson-vector-layers-with-rotated-text-labels-in-ol3/ http://exposedata.com/talk/d3-geo/
 - add cache: https://console.aws.amazon.com/elasticache/home
 - add cloudfront: https://console.aws.amazon.com/cloudfront/home

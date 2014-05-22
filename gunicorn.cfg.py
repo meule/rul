@@ -16,5 +16,4 @@ else:
   os.sysconf("SC_NPROCESSORS_ONLN")
 
 
-timeout=30
-   
+timeout=100
