@@ -60,7 +60,7 @@ wget http://gis-lab.info/data/vmap0/hydro-area.7z
 
 # download osm data
 wget http://data.gis-lab.info/osm_dump/dump/latest/RU.osm.pbf
-
+ 
 # unzip vmap0 data
 mkdir vmap0
 7z e -ovmap0 vegetation.7z
