@@ -12,7 +12,7 @@ do
             h) rdshost=${OPTARG};;
             e) ec2host=${OPTARG};;
             p) psswrd=${OPTARG};;
-            i) echo "index"
+            i) echo "index";;
         esac
 done
 
