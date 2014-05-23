@@ -40,11 +40,37 @@ path.forest { fill:#6fa; stroke:none; }
 path.veg { fill:#afc; stroke:none; }
 path.roads { stroke-linejoin; round; stroke-linecap: round; fill:none; stroke:#444; stroke-width:1px;}
 path.power_line { stroke-linejoin; round; stroke-linecap: round; fill:none; stroke:#fa6; stroke-width:1px;}
-
+#menu {
+  background-color: rgba(240,240,240,0.3);
+  position: absolute;
+  height: 100%;
+  width: 200px;
+  font-family: Geneva, Verdana, sans-serif;
+  color: #444;
+  left: 0px;
+  top:0px;
+  z-index: 1;
+}
   </style>
 
   </head><body>
 <div id="map"></div>
+<div id="menu">
+  <h2>Layers of Russia</h2>
+  <ul>
+    <li>Rivers</li>
+    <li>Water</li>
+    <li>Forest</li>
+    <li>Vegetation</li>
+    <li>Elevation</li>
+    <li>Buildings</li>
+    <li>Roads</li>
+    <li>Man made</li>
+    <li>Power Generators</li>
+    <li>Power Stations</li>
+    <li>Power Grid</li>
+  </ul>
+</div>
 
 <script type="text/javascript">
 (function(window) {
