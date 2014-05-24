@@ -1,4 +1,4 @@
--- power 
+-- power
 create table rul.power_generator as
   select osm_id,name,way,power,"generator:source" from planet_osm_point where power='generator'
   union select osm_id,name,way,power,"generator:source" from planet_osm_polygon where power='generator';
@@ -85,3 +85,9 @@ drop table rul.elev;
 CREATE INDEX idx_way_elevation ON rul.elevation USING gist (way);
 ALTER TABLE rul.elevation ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_elevation ON rul.elevation USING btree (id);
+
+-- simplify for zoom
+-- create table rul.rivers_z7 as SELECT * FROM rul.rivers;
+-- update rul.rivers_s set way=ST_SimplifyPreserveTopology(way, 20000);
+-- CREATE INDEX idx_way_rivers_z7 ON rul.rivers_z7 USING gist (way);
+-- CREATE UNIQUE INDEX uidx_id_rivers_z7 ON rul.rivers_z7 USING btree (id);
