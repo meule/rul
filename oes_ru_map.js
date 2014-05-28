@@ -11,7 +11,7 @@ var svgOesRu, oesArray=[],
     };
 
 function init() {
-  d3.xml('oes_ru_map4.svg', "image/svg+xml", function(xml) {
+  d3.xml('oes_ru_map.svg', "image/svg+xml", function(xml) {
   	document.getElementById('oes_ru_map_svg').appendChild(xml.documentElement);
   	svgOesRu=d3.select('#oes_ru_map_svg').select('svg');
     for (var oes in oesColors) oesArray.push({name:oes});
