@@ -10,19 +10,19 @@ var svgOesRu, oesArray=[],
       oes_east:{color:{fill:'#23bef0',stroke:'#00aeed',text:'#0082c8'},grey:{fill:'#dcdcdc'}},
     };
 
-function init() {
+function initRUoes() {
   d3.xml('oes_ru_map.svg', "image/svg+xml", function(xml) {
   	document.getElementById('oes_ru_map_svg').appendChild(xml.documentElement);
   	svgOesRu=d3.select('#oes_ru_map_svg').select('svg');
     for (var oes in oesColors) oesArray.push({name:oes});
     svgOesRu.select('#oes_paths').selectAll('.oes_region').data(oesArray,function(d){ return d ? d.name: this.id;})
-    stylesInit();
+    stylesInitRUoes();
     colorRegions();
-    eventsInit();
+    eventsInitRUoes();
   });
 }
 
-function stylesInit() {
+function stylesInitRUoes() {
   svgOesRu.selectAll('.oes_popup').style('pointer-events','none');
   svgOesRu.select('#oes_names').style('pointer-events','none');
   svgOesRu.selectAll('text').selectAll('tspan')
@@ -70,7 +70,7 @@ function greyRegions(selectedOes){
   svgOesRu.select('#oes_names').selectAll('tspan').style('fill','#fff');
 }
 
-function eventsInit(){
+function eventsInitRUoes(){
   svgOesRu.selectAll('.oes_region')
     .on('mouseover',function(d){
         greyRegions(d.name);
@@ -84,4 +84,4 @@ function eventsInit(){
       })
 }
 
-init();
+initRUoes();
