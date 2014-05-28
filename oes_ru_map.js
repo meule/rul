@@ -1,4 +1,4 @@
-var svg, oesArray=[],
+var svgOesRu, oesArray=[],
     oesAnimaDur=300,
     oesColors={
       oes_center:{color:{fill:'#0082c8',stroke:'#00aeed',text:'#b4dcf5'},grey:{fill:'#8c8c8c'}},
@@ -11,11 +11,11 @@ var svg, oesArray=[],
     };
 
 function init() {
-  d3.xml('oes_ru_map3.svg', "image/svg+xml", function(xml) {
+  d3.xml('oes_ru_map4.svg', "image/svg+xml", function(xml) {
   	document.getElementById('oes_ru_map_svg').appendChild(xml.documentElement);
-  	svg=d3.select('#oes_ru_map_svg').select('svg');
+  	svgOesRu=d3.select('#oes_ru_map_svg').select('svg');
     for (var oes in oesColors) oesArray.push({name:oes});
-    svg.select('#oes_paths').selectAll('.oes_region').data(oesArray,function(d){ return d ? d.name: this.id;})
+    svgOesRu.select('#oes_paths').selectAll('.oes_region').data(oesArray,function(d){ return d ? d.name: this.id;})
     stylesInit();
     colorRegions();
     eventsInit();
@@ -23,68 +23,65 @@ function init() {
 }
 
 function stylesInit() {
-  svg.selectAll('.oes_popup').style('pointer-events','none');
-  svg.select('#oes_names').style('pointer-events','none');
-  svg.selectAll('text').selectAll('tspan')
+  svgOesRu.selectAll('.oes_popup').style('pointer-events','none');
+  svgOesRu.select('#oes_names').style('pointer-events','none');
+  svgOesRu.selectAll('text').selectAll('tspan')
     .style('font-family','PT Sans')
     .style('font-variant','normal')
     .style('font-weight','normal')
     .style('font-stretch','normal');
-  svg.selectAll('.region_fill').selectAll('path')
+  svgOesRu.selectAll('.region_fill').selectAll('path')
     .style('fill-opacity','1')
     .style('fill-rule','nonzero')
     .style('stroke','none')
-  svg.selectAll('.region_stroke').selectAll('path')
+  svgOesRu.selectAll('.region_stroke').selectAll('path')
     .style('fill','none')
-    .style('stroke-width','0.54275')
+    .style('stroke-width','1px')
     .style('stroke-linecap','round')
     .style('stroke-linejoin','round')
     .style('stroke-miterlimit','4')
     .style('stroke-opacity','1')
     .style('stroke-dasharray','none');
-  svg.select('#legend').selectAll('path')
+  svgOesRu.select('#legend').selectAll('path')
     .style('fill','none')
     .style('stroke-opacity','1')
     .style('stroke-dasharray','none');
-  svg.selectAll('.oes_popup').style('opacity',0)
+  svgOesRu.selectAll('.oes_popup').style('display','none')
 }
 
 function colorRegions(){
-  for(var oes in oesColors){
-    svg.select('#'+oes+'_fill').selectAll('path').transition().duration(oesAnimaDur*1.5).style('fill',oesColors[oes].color.fill);
-    svg.select('#'+oes+'_stroke').selectAll('path').transition().duration(oesAnimaDur*1.5).style('stroke',oesColors[oes].color.stroke);
-    svg.select('#oes_names').selectAll('.'+oes+'_name').transition().duration(oesAnimaDur)
-      .style('fill',oesColors[oes].color.text)
-      .style('fill-opacity',1);
-  }
+  svgOesRu.selectAll('.oes_region')
+    .each(function(d){
+        svgOesRu.select('#'+d.name).select('.region_fill').selectAll('path')
+          .style('fill',oesColors[d.name].color.fill);
+        svgOesRu.select('#'+d.name).select('.region_stroke').selectAll('path')
+          .style('stroke',oesColors[d.name].color.stroke);
+        svgOesRu.selectAll('.'+d.name+'_name')
+          .style('fill',oesColors[d.name].color.text);
+      })
 }
 
 function greyRegions(selectedOes){
-  for(var oes in oesColors){
-    if (selectedOes!=oes) {
-      svg.select('#'+oes+'_fill').selectAll('path').transition().duration(oesAnimaDur*1.5).style('fill',oesColors[oes].grey.fill);
-      svg.select('#oes_names').selectAll('.'+oes+'_name').transition().duration(oesAnimaDur)
-        .style('fill','#fff')
-        .style('fill-opacity',1);
-    }
-    svg.select('#'+oes+'_stroke').selectAll('path').transition().duration(oesAnimaDur*1.5).style('stroke','#d2d2d2');
-  }
+  svgOesRu.selectAll('.region_fill').each(function(d){
+      d3.select(this).selectAll('path')
+        .style('fill',d.name==selectedOes ? oesColors[d.name].color.fill : oesColors[d.name].grey.fill);
+    })
+  svgOesRu.selectAll('.region_stroke').selectAll('path').style('stroke','#d2d2d2');
+  svgOesRu.select('#oes_names').selectAll('tspan').style('fill','#fff');
 }
 
 function eventsInit(){
-  for(var oes in oesColors){
-    svg.select('#'+oes)
-      .on('mouseover',function(d){
-          greyRegions(d.name);
-          svg.select('#'+d.name+'_popup').transition().duration(oesAnimaDur).style('opacity',1);
-          svg.select('#oes_names').selectAll('.'+d.name+'_name').transition().duration(oesAnimaDur).style('fill-opacity',0);
-        })
-      .on('mouseout',function(d){
-          colorRegions();
-          svg.selectAll('.oes_popup').transition().duration(oesAnimaDur).style('opacity',0)
-          //svg.select('#oes_names').selectAll('tspan').transition().duration(oesAnimaDur);
-        })
-  }
+  svgOesRu.selectAll('.oes_region')
+    .on('mouseover',function(d){
+        greyRegions(d.name);
+        svgOesRu.select('#'+d.name+'_popup').style('display',null);
+        svgOesRu.selectAll('.'+d.name+'_name').style('display','none');
+      })
+    .on('mouseout',function(d){
+        colorRegions();
+        svgOesRu.selectAll('.oes_popup').style('display','none');
+        svgOesRu.selectAll('.'+d.name+'_name').style('display',null);
+      })
 }
 
 init();
