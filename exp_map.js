@@ -61,10 +61,8 @@ function greyRegionsExp(selGroup){
     .each(function(d){
         svgExp.select('#'+d.name).selectAll('path')
           .style('fill', expColors[d.name].grey.fill );
-
       })
   group2region[selGroup].forEach(function(selExp){
-    console.log(selExp)
     svgExp.select('#'+selExp).selectAll('path').style('fill',expColors[selExp].color.fill);
   })
 }
@@ -73,6 +71,7 @@ function eventsInitExp(){
   svgExp.selectAll('.exp_group')
     .on('mouseover',function(d){
         greyRegionsExp(d.name);
+        console.log(d.name);
         svgExp.select('#'+d.name).selectAll('.exp_popup').style('display',null);
       })
     .on('mouseout',function(d){
