@@ -20,7 +20,7 @@ function initPro() {
 }
 
 function stylesInitPro() {
-
+ 
   svgPro.selectAll('.popup').style('pointer-events','none').style('display','none');
   svgPro.select('#pro_others').selectAll('text').style('pointer-events','none');
   svgPro.select('#pro_others').selectAll('path').style('pointer-events','none');

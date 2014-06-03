@@ -1,4 +1,4 @@
-var svgExp,
+var svgExp, 
     expColors={
       exp_mur:{color:{fill:'#00aaf0'},grey:{fill:'#c8c8c8'}},
       exp_kar:{color:{fill:'#0082c8'},grey:{fill:'#8c8c8c'}},
