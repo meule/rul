@@ -71,7 +71,6 @@ function eventsInitExp(){
   svgExp.selectAll('.exp_group')
     .on('mouseover',function(d){
         greyRegionsExp(d.name);
-        console.log(d.name);
         svgExp.select('#'+d.name).selectAll('.exp_popup').style('display',null);
       })
     .on('mouseout',function(d){
