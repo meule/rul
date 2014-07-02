@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0"/>
+
+  <title>Russian rivers</title>
+
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+  <!--[if lte IE 8]>
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+  <![endif]-->
+  <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.3.11/d3.min.js" charset="utf-8"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+
+  <style type="text/css">
+  html, body { height: 100% }
+  #map {   min-height: 100%; background-color: #fff;}
+  body {
+      margin: 0;
+      font-family: Helvetica, Arial, sans-serif; font-size: 12px;
+      overflow: hidden;
+      background-color: #fff;
+
+  }
+  .leaflet-popup-content-wrapper {
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+  }
+
+path.rivers { stroke-linejoin; round; stroke-linecap: round; fill:none; stroke:#6af; stroke-width:1px;}
+path.water { fill:#6af; stroke:none; }
+#menu {
+  background-color: rgba(240,240,240,0.7);
+  position: absolute;
+  height: 100%;
+  width: 200px;
+  font-family: Geneva, Verdana, sans-serif;
+  color: #444;
+  left: 0px;
+  top:0px;
+  z-index: 1;
+}
+  </style>
+
+  </head><body>
+<div id="map"></div>
+<div id="menu">
+  <h2>Russian rivers</h2>
+  <ul>
+    <li>Rivers</li>
+    <li>Water</li>
+  </ul>
+</div>
+
+<script type="text/javascript">
+(function(window) {
+	var HAS_HASHCHANGE = (function() {
+		var doc_mode = window.documentMode;
+		return ('onhashchange' in window) &&
+			(doc_mode === undefined || doc_mode > 7);
+	})();
+
+	L.Hash = function(map) {
+		this.onHashChange = L.Util.bind(this.onHashChange, this);
+
+		if (map) {
+			this.init(map);
+		}
+	};
+
+	L.Hash.parseHash = function(hash) {
+		if(hash.indexOf('#') === 0) {
+			hash = hash.substr(1);
+		}
+		var args = hash.split("/");
+		if (args.length == 3) {
+			var zoom = parseInt(args[0], 10),
+			lat = parseFloat(args[1]),
+			lon = parseFloat(args[2]);
+			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
+				return false;
+			} else {
+				return {
+					center: new L.LatLng(lat, lon),
+					zoom: zoom
+				};
+			}
+		} else {
+			return false;
+		}
+	};
+
+	L.Hash.formatHash = function(map) {
+		var center = map.getCenter(),
+		    zoom = map.getZoom(),
+		    precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
+
+		return "#" + [zoom,
+			center.lat.toFixed(precision),
+			center.lng.toFixed(precision)
+		].join("/");
+	},
+
+	L.Hash.prototype = {
+		map: null,
+		lastHash: null,
+
+		parseHash: L.Hash.parseHash,
+		formatHash: L.Hash.formatHash,
+
+		init: function(map) {
+			this.map = map;
+
+			// reset the hash
+			this.lastHash = null;
+			this.onHashChange();
+
+			if (!this.isListening) {
+				this.startListening();
+			}
+		},
+
+		removeFrom: function(map) {
+			if (this.changeTimeout) {
+				clearTimeout(this.changeTimeout);
+			}
+
+			if (this.isListening) {
+				this.stopListening();
+			}
+
+			this.map = null;
+		},
+
+		onMapMove: function() {
+			// bail if we're moving the map (updating from a hash),
+			// or if the map is not yet loaded
+
+			if (this.movingMap || !this.map._loaded) {
+				return false;
+			}
+
+			var hash = this.formatHash(this.map);
+			if (this.lastHash != hash) {
+				location.replace(hash);
+				this.lastHash = hash;
+			}
+		},
+
+		movingMap: false,
+		update: function() {
+			var hash = location.hash;
+			if (hash === this.lastHash) {
+				return;
+			}
+			var parsed = this.parseHash(hash);
+			if (parsed) {
+				this.movingMap = true;
+
+				this.map.setView(parsed.center, parsed.zoom);
+
+				this.movingMap = false;
+			} else {
+				this.onMapMove(this.map);
+			}
+		},
+
+		// defer hash change updates every 100ms
+		changeDefer: 100,
+		changeTimeout: null,
+		onHashChange: function() {
+			// throttle calls to update() so that they only happen every
+			// `changeDefer` ms
+			if (!this.changeTimeout) {
+				var that = this;
+				this.changeTimeout = setTimeout(function() {
+					that.update();
+					that.changeTimeout = null;
+				}, this.changeDefer);
+			}
+		},
+
+		isListening: false,
+		hashChangeInterval: null,
+		startListening: function() {
+			this.map.on("moveend", this.onMapMove, this);
+
+			if (HAS_HASHCHANGE) {
+				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
+			} else {
+				clearInterval(this.hashChangeInterval);
+				this.hashChangeInterval = setInterval(this.onHashChange, 50);
+			}
+			this.isListening = true;
+		},
+
+		stopListening: function() {
+			this.map.off("moveend", this.onMapMove, this);
+
+			if (HAS_HASHCHANGE) {
+				L.DomEvent.removeListener(window, "hashchange", this.onHashChange);
+			} else {
+				clearInterval(this.hashChangeInterval);
+			}
+			this.isListening = false;
+		}
+	};
+	L.hash = function(map) {
+		return new L.Hash(map);
+	};
+	L.Map.prototype.addHash = function() {
+		this._hash = L.hash(this);
+	};
+	L.Map.prototype.removeHash = function() {
+		this._hash.removeFrom();
+	};
+})(window);
+
+L.TileLayer.d3_topoJSON =  L.TileLayer.extend({
+    onAdd : function(map) {
+        L.TileLayer.prototype.onAdd.call(this,map);
+        this._path = d3.geo.path().projection(function(d) {
+            var point = map.latLngToLayerPoint(new L.LatLng(d[1],d[0]));
+            return [point.x,point.y];
+        });
+        this.on("tileunload",function(d) {
+            if (d.tile.xhr) d.tile.xhr.abort();
+            if (d.tile.nodes) d.tile.nodes.remove();
+            d.tile.nodes = null;
+            d.tile.xhr = null;
+        });
+    },
+    _loadTile : function(tile,tilePoint) {
+        var self = this, ttt;
+        this._adjustTilePoint(tilePoint);
+
+        if (!tile.nodes && !tile.xhr) {
+            tile.xhr = d3.json(ttt=this.getTileUrl(tilePoint),function(error, tjData) {
+                //console.log(ttt,tjData,error);
+                if (error) {
+                    console.log(error);
+                } else {
+                    var geoJson = topojson.feature(tjData, tjData.objects[self.options.layerName]);
+                    tile.xhr = null;
+                    tile.nodes = d3.select(map._container).select("svg").append("g");
+                    tile.nodes.selectAll("path")
+                        .data(geoJson.features).enter()
+                      .append("path")
+                        .attr("d", self._path)
+                        .attr("class", self.options.class)
+                        .attr("style", self.options.style);
+                }
+            });
+        }
+    }
+});
+
+
+var layers=["rivers","water"];
+
+// Construct map, center if no location provided
+var map = L.map('map', { minZoom: 1, maxZoom: 16 } );
+
+var hash = new L.Hash(map);
+if (!window.location.hash) {
+    map.setView([55.75,37.65], 11);
+}
+  
+// Add a fake GeoJSON line to coerce Leaflet into creating the <svg> tag that d3_geoJson needs
+new L.geoJson({"type": "LineString","coordinates":[[0,0],[0,0]]}).addTo(map);
+
+new L.TileLayer.d3_topoJSON("http://_ec2host_/tiles/"+layers[1]+"/{z}/{x}/{y}.topojson", {
+//new L.TileLayer.d3_topoJSON("http://54.72.184.190/rivers/{z}/{x}/{y}.topojson", {
+  class: layers[1],
+  layerName: "vectile",
+  style: function(d)
+      {
+          //return "stroke:#6af; stroke-width:1px;"
+      }
+
+}).addTo(map);
+
+new L.TileLayer.d3_topoJSON("http://_ec2host_/tiles/"+layers[0]+"/{z}/{x}/{y}.topojson", {
+//new L.TileLayer.d3_topoJSON("http://54.72.184.190/rivers/{z}/{x}/{y}.topojson", {
+  class: layers[0],
+  layerName: "vectile",
+  style: function(d)
+      {
+          //return "stroke:#6af; stroke-width:1px;"
+      }
+
+}).addTo(map);
+
+
+</script>
+</body></html>
