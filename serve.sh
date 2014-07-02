@@ -2,6 +2,7 @@
  
 rm tilestache.cfg
 rm index.html
+rm rivers.html
 
 git pull
 git checkout -- .
