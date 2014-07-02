@@ -1,5 +1,5 @@
 # bash rul.sh -e 54.72.184.190 -h osm.cxgbat4jt7jg.eu-west-1.rds.amazonaws.com -p rds_password
-
+ 
 rm tilestache.cfg
 rm index.html
 
