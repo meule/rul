@@ -1,3 +1,4 @@
+CREATE EXTENSION intarray;
 CREATE EXTENSION postgis;
 CREATE EXTENSION fuzzystrmatch;
 CREATE EXTENSION postgis_tiger_geocoder;

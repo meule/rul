@@ -86,8 +86,23 @@ CREATE INDEX idx_way_elevation ON rul.elevation USING gist (way);
 ALTER TABLE rul.elevation ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_elevation ON rul.elevation USING btree (id);
 
--- simplify for zoom
--- create table rul.rivers_z7 as SELECT * FROM rul.rivers;
--- update rul.rivers_s set way=ST_SimplifyPreserveTopology(way, 20000);
--- CREATE INDEX idx_way_rivers_z7 ON rul.rivers_z7 USING gist (way);
--- CREATE UNIQUE INDEX uidx_id_rivers_z7 ON rul.rivers_z7 USING btree (id);
+-- create simplified geometry tables
+  CREATE OR REPLACE FUNCTION simp(text) RETURNS void AS $$ DECLARE
+    table_name ALIAS FOR $1;
+    i integer; strahler integer; simpl float;
+  BEGIN
+    for i in 1..10 loop
+      simpl:=2^(10-i)*30;
+      -- strahler:=
+      execute 'drop table if exists '||(table_name)||'_z'||(i)||';'; 
+      execute 'create table '||table_name||'_z'||(i)||' (osm_id integer, name text);'; 
+      execute 'SELECT AddGeometryColumn('|| quote_literal(split_part((table_name||'_z'||(i)),'.',1)) ||','|| quote_literal(split_part((table_name||'_z'||(i)),'.',2)) ||','|| quote_literal('way') ||',900913,'|| quote_literal('LineString') ||',2);';
+      execute 'insert into '||(table_name)||'_z'||(i)||' (osm_id, name, way)
+        select osm_id, ST_SimplifyPreserveTopology(way,'||(simpl)||') as way from '||(table_name); -- where strahler>... and where length or where area
+      execute 'CREATE INDEX idx_'||(replace(table_name,'.','_'))||'_way_z'||(i)||' ON '||(table_name)||' USING gist (way);';
+      raise info '%',m;
+    end loop;
+  END; $$ LANGUAGE plpgsql volatile RETURNS NULL ON NULL INPUT;
+
+  select simp('rul.rivers');
+  select simp('rul.water');
