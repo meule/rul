@@ -87,9 +87,8 @@ ALTER TABLE rul.elevation ADD COLUMN id SERIAL PRIMARY KEY;
 CREATE UNIQUE INDEX uidx_id_elevation ON rul.elevation USING btree (id);
 
 -- create simplified geometry tables
-  CREATE OR REPLACE FUNCTION simp(text) RETURNS void AS $$ DECLARE
     table_name ALIAS FOR $1;
-    i integer; strahler integer; simpl float;
+    i integer; strahler integer; simpl float; m text;
   BEGIN
     for i in 1..10 loop
       simpl:=2^(10-i)*30;
@@ -100,9 +99,10 @@ CREATE UNIQUE INDEX uidx_id_elevation ON rul.elevation USING btree (id);
       execute 'insert into '||(table_name)||'_z'||(i)||' (osm_id, name, way)
         select osm_id, name, ST_SimplifyPreserveTopology(way,'||(simpl)||') as way from '||(table_name); -- where strahler>... and where length or where area
       execute 'CREATE INDEX idx_'||(replace(table_name,'.','_'))||'_way_z'||(i)||' ON '||(table_name)||' USING gist (way);';
+      m:='table '||table_name||'_z'||(i)||' created';
       raise info '%',m;
     end loop;
   END; $$ LANGUAGE plpgsql volatile RETURNS NULL ON NULL INPUT;
 
   select simp('rul.rivers');
-  select simp('rul.water');
+  --select simp('rul.water');
