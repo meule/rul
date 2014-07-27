@@ -310,7 +310,7 @@ if (!window.location.hash) {
    
 // Add a fake GeoJSON line to coerce Leaflet into creating the <svg> tag that d3_geoJson needs
 new L.geoJson({"type": "LineString","coordinates":[[0,0],[0,0]]}).addTo(map);
-
+ 
 new L.TileLayer.d3_topoJSON("http://_ec2host_/tiles/"+QueryString.layer+"/{z}/{x}/{y}.topojson", {
 //new L.TileLayer.d3_topoJSON("http://54.72.184.190/rivers/{z}/{x}/{y}.topojson", {
   pointToLayer: function (feature, latlng) {
